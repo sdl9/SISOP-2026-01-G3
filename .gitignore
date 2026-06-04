@@ -1,0 +1,11 @@
+# Binários compilados
+*.o
+*.out
+escalonador
+
+# Outputs gerados
+output/*.txt
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
