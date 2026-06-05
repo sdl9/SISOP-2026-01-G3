@@ -13,6 +13,12 @@ class Scheduler:
         self.current_quantum = 0
         self.clock = 0
         self.log_messages = []
+        
+    def get_quantum(self, process):
+        if process.priority == "HIGH":
+            return 2
+
+        return 4
 
     def log(self, message: str):
         msg = f"Tempo [{self.clock:03d}]: {message}"
@@ -38,24 +44,47 @@ class Scheduler:
             if pcb.io_wait_time <= 0:
                 self.queue_io.remove(pcb)
                 pcb.status = "READY"
-                pcb.priority = "HIGH"
-                self.queue_high.append(pcb)
-                self.log(f"PID {pcb.pid} concluiu I/O e retornou para a Fila Alta.")
+                if pcb.io_type == 1:  # Disco
+                    pcb.priority = "LOW"
+                    self.queue_low.append(pcb)
+                    self.log(f"PID {pcb.pid} concluiu I/O e retornou para a Fila Baixa."
+                        )
+
+                elif pcb.io_type == 2:
+                    pcb.priority = "HIGH"
+                    self.queue_high.append(pcb)
+                    self.log(
+                        f"PID {pcb.pid} concluiu I/O e retornou para a Fila Alta."
+    )
+
+                elif pcb.io_type == 3:  # Impressora
+                    pcb.priority = "HIGH"
+                    self.queue_high.append(pcb)
+                    self.log(f"PID {pcb.pid} concluiu I/O e retornou para a Fila Alta.")
 
     def context_switch(self):
-        if self.running_process is not None: return
-        
+        if self.running_process is not None:
+            return
+
         if self.queue_high:
             self.running_process = self.queue_high.pop(0)
+
         elif self.queue_low:
             self.running_process = self.queue_low.pop(0)
+
         else:
             return
 
+        self.quantum = self.get_quantum(self.running_process)
+
         self.running_process.status = "RUNNING"
         self.current_quantum = 0
-        self.log(f"Troca de contexto: CPU para PID {self.running_process.pid} (Fila: {self.running_process.priority})")
 
+        self.log(
+            f"Troca de contexto: CPU para PID "
+            f"{self.running_process.pid} "
+            f"(Fila: {self.running_process.priority})"
+        )
     def execute_cpu(self):
         if self.running_process is None:
             self.log("CPU Ociosa.")
@@ -75,7 +104,7 @@ class Scheduler:
             self.running_process.status = "WAITING"
             self.running_process.io_wait_time = 3 if self.running_process.io_type == 1 else 5
             self.queue_io.append(self.running_process)
-            self.log(f"PID {self.running_process.pid} solicitou I/O e foi para a Fila VO.")
+            self.log(f"PID {self.running_process.pid} solicitou I/O e foi para a Fila I/O.")
             self.running_process = None
             return
 
