@@ -1,11 +1,53 @@
+"""
+Premissas do escalonador (a serem definidas):
+  - Quantum                    : 3 ticks
+  - Número máximo de processos : definido pelo CSV de entrada
+  - Faixa de tempo de CPU      : 4–12 ticks (a definir no gerador de CSV)
+  - Duração de I/O — DISCO     : 4 ticks - retorna à fila BAIXA
+  - Duração de I/O — FITA      : 6 ticks - retorna à fila ALTA
+  - Duração de I/O — IMPRESSORA: 3 ticks - retorna à fila ALTA
+  - Critério de finalização    : todas as filas vazias e CPU livre
+  - Semente aleatória          : N/A (processos definidos em CSV)
+"""
+
 import os
+import sys
+
+# Garante que o diretório src/ esteja no path quando main.py
+# for executado a partir da raiz do projeto
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+
 from scheduler import Scheduler
 
+
+# Altere estes valores para ajustar o comportamento do simulador.
+
+QUANTUM = 3  # Fatia de tempo concedida a cada processo (em ticks)
+
+# Duração (em ticks) de cada dispositivo de I/O.
+# Regras de retorno são definidas no io_manager.py e não dependem destes valores.
+IO_DURATIONS = {
+    "DISCO":      4,   # Disco: operação mais custosa
+    "FITA":       6,   # Fita: operação mais lenta, porém recompensada com prioridade alta
+    "IMPRESSORA": 3,   # Impressora: operação rápida, também recompensada
+}
+
+# Caminho para o arquivo CSV com os processos a escalonar
+INPUT_FILE = os.path.join("input", "processes.csv")
+
+
 def main():
-    input_file = os.path.join("input", "processes.csv")
-    sched = Scheduler()
-    sched.load_processes_from_csv(input_file)
+    """Inicializa e executa o escalonador."""
+
+    # Instancia o escalonador com as premissas definidas acima
+    sched = Scheduler(quantum=QUANTUM, io_durations=IO_DURATIONS)
+
+    # Carrega os processos do arquivo de entrada
+    sched.load_processes_from_csv(INPUT_FILE)
+
+    # Executa a simulação completa
     sched.run()
+
 
 if __name__ == "__main__":
     main()
