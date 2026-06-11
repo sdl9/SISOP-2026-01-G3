@@ -9,3 +9,6 @@ output/*.txt
 # Arquivos de sistema
 .DS_Store
 Thumbs.db
+
+__pycache__/
+*.pyc
