@@ -1,62 +1,165 @@
 # Trabalho Final de Sistemas Operacionais
 
 ## Grupo
-- Aluno 1: Fernando
-- Aluno 2: Arthur
-- Aluno 3: Matheus
+- Aluno 1: Fernando Mueller
+- Aluno 2: Arthur Duarte
+- Aluno 3: Matheus Muller
 - Aluno 4: Guilherme
 - Aluno 5: Laíssa Salles
-- Aluno 6: Nicolas
+- Aluno 6: Nicolas Jahno
 
 ## Sobre o projeto
-Simulador de escalonamento de processos com algoritmo Round Robin com Feedback,
+
+Simulador de escalonamento de processos com algoritmo **Round Robin com Feedback**,
 desenvolvido como trabalho final da disciplina de Sistemas Operacionais — Feevale 2026/01.
 
 O simulador implementa:
-- Filas de alta e baixa prioridade
-- Fila de I/O com disco, fita magnética e impressora
-- Retorno dos processos às filas corretas após cada dispositivo de I/O
-- Logs de evolução a cada evento relevante
+- Duas filas de prioridade (alta e baixa) com quantums distintos
+- Três dispositivos de I/O independentes: disco, fita magnética e impressora
+- Regras de retorno diferenciadas por dispositivo após conclusão do I/O
+- Logs detalhados de cada evento por unidade de tempo
 - Métricas finais: turnaround, tempo de espera, preempções e CPU ociosa
 
 ## Linguagem utilizada
-Python 3.x
+
+Python 3.12 — sem dependências externas, apenas biblioteca padrão.
 
 ## Convenção de código
+
 Todo o código deve ser comentado. Cada função, bloco lógico e decisão
 relevante deve ter um comentário explicando o que faz e por quê.
 Isso facilita a leitura e revisão por todos os membros do grupo.
 
 ## Premissas do escalonador
-- Quantum: (a definir)
-- Número máximo de processos: (a definir)
-- Faixa de tempo de serviço de CPU: (a definir)
-- Faixa de tempo de I/O: (a definir)
-- Duração de disco: (a definir) | fita: (a definir) | impressora: (a definir)
-- Critério de geração dos processos: (a definir)
-- Critério de finalização da simulação: (a definir)
-- Semente aleatória: (a definir)
+
+| Parâmetro | Valor |
+|---|---|
+| Quantum — Fila ALTA | 2 ticks |
+| Quantum — Fila BAIXA | 4 ticks |
+| Duração de I/O — DISCO | 4 ticks |
+| Duração de I/O — FITA | 6 ticks |
+| Duração de I/O — IMPRESSORA | 3 ticks |
+| Retorno após DISCO | Fila BAIXA |
+| Retorno após FITA | Fila ALTA |
+| Retorno após IMPRESSORA | Fila ALTA |
+| Processos novos | Entram sempre na Fila ALTA |
+| Quantum expirado | Processo rebaixado para Fila BAIXA |
+| Critério de finalização | Filas de CPU e I/O vazias e CPU livre |
+| Semente aleatória | N/A — processos definidos via CSV |
 
 ## Estrutura do repositório
+
+```
 SISOP-2026-01-G3/
-├── src/          # Código-fonte do simulador
-├── input/        # Arquivos de entrada com os processos
-├── output/       # Saída gerada pelo simulador
-├── docs/         # Relatório e documentação
+├── src/
+│   ├── main.py          # Ponto de entrada — define premissas e executa o escalonador
+│   ├── scheduler.py     # Loop principal, filas de CPU e lógica de escalonamento
+│   ├── io_manager.py    # Gerenciamento das filas de I/O por dispositivo
+│   └── pcb.py           # Estrutura do Bloco de Controle de Processo (PCB)
+├── input/
+│   └── processes.csv    # Arquivo de entrada com os processos a escalonar
+├── output/
+│   └── execution_log.txt  # Gerado automaticamente após a execução
+├── docs/                # Relatório e documentação
 ├── Dockerfile
 ├── .dockerignore
 └── README.md
+```
 
 > As pastas contêm um arquivo `.gitkeep` apenas para que o Git rastreie
-> pastas vazias. O Git não versiona pastas sem arquivos, então o `.gitkeep`
-> serve como placeholder e pode ser removido quando arquivos reais forem
-> adicionados.
+> pastas vazias. O Git não versiona pastas sem arquivos — o `.gitkeep`
+> serve como placeholder e pode ser removido quando arquivos reais forem adicionados.
+
 > Este README será atualizado conforme o progresso do trabalho.
+
+## Formato do arquivo de entrada
+
+O simulador lê os processos do arquivo `input/processes.csv`.
+
+**Colunas:**
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `PID` | inteiro | Identificador único do processo |
+| `PPID` | inteiro | PID do processo pai (0 = processo raiz) |
+| `TIME_REMAINING` | inteiro | Unidades de CPU necessárias para finalizar |
+| `IO_TYPE` | inteiro | Dispositivo de I/O: `0`=nenhum `1`=disco `2`=fita `3`=impressora |
+
+**Exemplo (`input/processes.csv`):**
+
+```csv
+PID,PPID,TIME_REMAINING,IO_TYPE
+1,0,5,1
+2,0,3,0
+3,1,8,2
+4,1,2,0
+```
+
+## Como executar
+
+```bash
+# A partir da raiz do projeto
+python src/main.py
+```
+
+O simulador lê `input/processes.csv` e salva o log em `output/execution_log.txt`.
+
+**Exemplo de saída:**
+
+```
+============================================================
+[t=000] INICIANDO SIMULAÇÃO — Round Robin com Feedback + I/O
+[t=000] Quantum ALTA=2 | Quantum BAIXA=4 | Dispositivos: DISCO, FITA, IMPRESSORA
+[t=000] Durações de I/O: DISCO=4 | FITA=6 | IMPRESSORA=3
+============================================================
+[t=000] Processo criado — Fila ALTA: [PID:1 | Status:READY | Prioridade:HIGH | TempoRestante:5 | I/O:DISCO]
+[t=000] Processo criado — Fila ALTA: [PID:2 | Status:READY | Prioridade:HIGH | TempoRestante:3 | I/O:NENHUM]
+[t=001] Troca de contexto — CPU para PID 1 (Fila: HIGH | Quantum: 2)
+[t=001] Executando PID 1 | Resta: 4 | Quantum: 1/2 | I/O: DISCO
+[t=002] Executando PID 1 | Resta: 3 | Quantum: 2/2 | I/O: DISCO
+[t=002] PID 1 solicitou I/O [DISCO] | Bloqueado por 4 ticks
+...
+[t=XXX] FIM DA SIMULAÇÃO
+============================================================
+
+──────────── MÉTRICAS FINAIS ────────────
+Tempo total da simulação    : X ticks
+Processos finalizados       : X
+Total de preempções         : X
+Turnaround médio            : X.XX ticks
+Tempo médio de espera       : X.XX ticks
+CPU ociosa                  : X.X%
+─────────────────────────────────────────
+```
+
+## Como executar com Docker
+
+> Requer [Docker Desktop](https://www.docker.com/products/docker-desktop) instalado.
+
+```bash
+# Build da imagem
+docker build -t sisop-g3 .
+
+# Executar a simulação
+docker run --rm sisop-g3
+```
+
+**Salvar o log gerado na sua máquina:**
+
+```bash
+# Linux / macOS
+docker run --rm -v $(pwd)/output:/app/output sisop-g3
+
+# Windows (PowerShell)
+docker run --rm -v "${PWD}/output:/app/output" sisop-g3
+```
+
+O arquivo `output/execution_log.txt` será criado na pasta local após a execução.
 
 ## Fluxo de trabalho com Git
 
 Cada membro deve criar uma branch própria antes de começar a codar.
-Isso evita conflito de código entre as pessoas e mantém a main organizada.
+Isso evita conflitos de código entre as pessoas e mantém a main organizada.
 
 ```bash
 # Clone o repositório (se ainda não fez)
