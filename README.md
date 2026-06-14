@@ -51,19 +51,24 @@ Isso facilita a leitura e revisão por todos os membros do grupo.
 
 ```
 SISOP-2026-01-G3/
-├── src/
-│   ├── main.py          # Ponto de entrada — define premissas e executa o escalonador
-│   ├── scheduler.py     # Loop principal, filas de CPU e lógica de escalonamento
-│   ├── io_manager.py    # Gerenciamento das filas de I/O por dispositivo
-│   └── pcb.py           # Estrutura do Bloco de Controle de Processo (PCB)
+├── docs/
+│   └── .gitkeep
 ├── input/
-│   └── processes.csv    # Arquivo de entrada com os processos a escalonar
+│   ├── .gitkeep
+│   └── processes.csv        # Arquivo de entrada com os processos a escalonar
 ├── output/
-│   └── execution_log.txt  # Gerado automaticamente após a execução
-├── docs/                # Relatório e documentação
-├── Dockerfile
-├── .dockerignore
-└── README.md
+│   ├── .gitkeep
+│   └── execution_log.txt    # Gerado automaticamente após a execução
+├── src/
+│   ├── .gitkeep
+│   ├── io_manager.py        # Gerenciamento das filas de I/O por dispositivo
+│   ├── main.py              # Ponto de entrada — define premissas e executa o escalonador
+│   ├── pcb.py               # Estrutura do Bloco de Controle de Processo (PCB)
+│   └── scheduler.py         # Loop principal, filas de CPU e lógica de escalonamento
+├── .dockerignore            # Arquivos ignorados no contexto de build Docker
+├── .gitignore               # Arquivos ignorados pelo Git
+├── Dockerfile               # Configuração da imagem Docker do projeto
+└── README.md                # Documentação principal do projeto
 ```
 
 > As pastas contêm um arquivo `.gitkeep` apenas para que o Git rastreie
