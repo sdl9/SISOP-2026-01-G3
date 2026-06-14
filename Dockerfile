@@ -1,0 +1,10 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY src/ ./src/
+COPY input/ ./input/
+
+RUN mkdir -p output
+
+CMD ["python", "src/main.py"]

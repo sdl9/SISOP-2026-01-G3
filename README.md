@@ -177,3 +177,19 @@ git push origin nome-da-pessoa
 
 Quando uma parte estiver pronta, a junção com a main será feita em conjunto
 para evitar conflitos.
+
+## Execução com Docker
+
+O projeto pode ser executado com Docker, permitindo rodar o simulador em ambiente isolado, sem necessidade de configurar manualmente o Python na máquina local.
+
+### Pré-requisitos
+
+- Docker instalado;
+- Docker Desktop configurado com WSL2, caso esteja utilizando Windows.
+
+### Construir a imagem Docker
+
+Na raiz do projeto, execute:
+
+```bash
+docker build -t so-escalonador-g3 .
