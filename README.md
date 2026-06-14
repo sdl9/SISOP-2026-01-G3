@@ -51,8 +51,6 @@ Isso facilita a leitura e revisão por todos os membros do grupo.
 
 ```
 SISOP-2026-01-G3/
-├── docs/
-│   └── .gitkeep
 ├── input/
 │   ├── .gitkeep
 │   └── processes.csv        # Arquivo de entrada com os processos a escalonar
