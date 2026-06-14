@@ -134,58 +134,12 @@ CPU ociosa                  : X.X%
 
 ## Como executar com Docker
 
-> Requer [Docker Desktop](https://www.docker.com/products/docker-desktop) instalado.
-
-```bash
-# Build da imagem
-docker build -t sisop-g3 .
-
-# Executar a simulação
-docker run --rm sisop-g3
-```
-
-**Salvar o log gerado na sua máquina:**
-
-```bash
-# Linux / macOS
-docker run --rm -v $(pwd)/output:/app/output sisop-g3
-
-# Windows (PowerShell)
-docker run --rm -v "${PWD}/output:/app/output" sisop-g3
-```
-
-O arquivo `output/execution_log.txt` será criado na pasta local após a execução.
-
-## Fluxo de trabalho com Git
-
-Cada membro deve criar uma branch própria antes de começar a codar.
-Isso evita conflitos de código entre as pessoas e mantém a main organizada.
-
-```bash
-# Clone o repositório (se ainda não fez)
-git clone https://github.com/sdl9/SISOP-2026-01-G3.git
-cd SISOP-2026-01-G3
-
-# Crie sua branch com seu nome
-git checkout -b nome-da-pessoa
-
-# Trabalhe normalmente e faça commits na sua branch
-git add .
-git commit -m "descrição do que fez"
-git push origin nome-da-pessoa
-```
-
-Quando uma parte estiver pronta, a junção com a main será feita em conjunto
-para evitar conflitos.
-
-## Execução com Docker
-
-O projeto pode ser executado com Docker, permitindo rodar o simulador em ambiente isolado, sem necessidade de configurar manualmente o Python na máquina local.
+O projeto pode ser executado com Docker, permitindo rodar o simulador em um ambiente isolado, sem necessidade de configurar manualmente o Python na máquina local.
 
 ### Pré-requisitos
 
-- Docker instalado;
-- Docker Desktop configurado com WSL2, caso esteja utilizando Windows.
+* Docker instalado;
+* No Windows, recomenda-se utilizar o Docker Desktop com integração WSL2 habilitada.
 
 ### Construir a imagem Docker
 
@@ -193,3 +147,50 @@ Na raiz do projeto, execute:
 
 ```bash
 docker build -t so-escalonador-g3 .
+```
+
+### Executar o simulador
+
+Após construir a imagem, execute:
+
+```bash
+docker run --rm so-escalonador-g3
+```
+
+### Executar salvando o log na pasta `output`
+
+Para salvar o arquivo de log na pasta `output` do projeto, execute:
+
+No Linux, macOS ou WSL2:
+
+```bash
+mkdir -p output
+docker run --rm -v "$(pwd)/output:/app/output" so-escalonador-g3
+```
+
+No Windows PowerShell:
+
+```powershell
+mkdir output -Force
+docker run --rm -v "${PWD}/output:/app/output" so-escalonador-g3
+```
+
+O simulador lê os processos definidos em:
+
+```txt
+input/processes.csv
+```
+
+E salva o log da execução em:
+
+```txt
+output/execution_log.txt
+```
+
+### Comandos principais para teste
+
+```bash
+docker build -t so-escalonador-g3 .
+docker run --rm so-escalonador-g3
+docker run --rm -v "$(pwd)/output:/app/output" so-escalonador-g3
+```
