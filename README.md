@@ -160,24 +160,6 @@ Após construir a imagem, execute:
 docker run --rm so-escalonador-g3
 ```
 
-### Executar salvando o log na pasta `output`
-
-Para salvar o arquivo de log na pasta `output` do projeto, execute:
-
-No Linux, macOS ou WSL2:
-
-```bash
-mkdir -p output
-docker run --rm -v "$(pwd)/output:/app/output" so-escalonador-g3
-```
-
-No Windows PowerShell:
-
-```powershell
-mkdir output -Force
-docker run --rm -v "${PWD}/output:/app/output" so-escalonador-g3
-```
-
 O simulador lê os processos definidos em:
 
 ```txt
