@@ -152,6 +152,8 @@ Na raiz do projeto, execute:
 docker build -t so-escalonador-g3 .
 ```
 
+Esse comando cria a imagem Docker do projeto a partir do `Dockerfile`, incluindo o código-fonte e os arquivos de entrada necessários para a execução do simulador.
+
 ### Executar o simulador
 
 Após construir a imagem, execute:
@@ -160,22 +162,57 @@ Após construir a imagem, execute:
 docker run --rm so-escalonador-g3
 ```
 
+Esse comando executa o simulador dentro do container e exibe o log da simulação no terminal.
+
 O simulador lê os processos definidos em:
 
 ```txt
 input/processes.csv
 ```
 
-E salva o log da execução em:
+E gera o log da execução em:
 
 ```txt
 output/execution_log.txt
 ```
 
+### Executar persistindo o log na máquina local
+
+Como o container é removido ao final da execução pelo parâmetro `--rm`, o log gerado dentro do ambiente do container não necessariamente fica disponível na pasta local do projeto.
+
+Para garantir que o arquivo `execution_log.txt` seja salvo na pasta `output` da máquina local, pode-se executar o container com montagem de volume.
+
+No Linux, macOS ou WSL2:
+
+```bash
+docker run --rm -v "$(pwd)/output:/app/output" so-escalonador-g3
+```
+
+No Windows PowerShell:
+
+```powershell
+docker run --rm -v "${PWD}/output:/app/output" so-escalonador-g3
+```
+
+Nesse comando, a pasta `output` do projeto local é vinculada à pasta `/app/output` dentro do container. Assim, o log gerado pela aplicação é gravado diretamente no projeto local, permitindo consultar o arquivo após a finalização do container.
+
 ### Comandos principais para teste
+
+Execução simples:
 
 ```bash
 docker build -t so-escalonador-g3 .
 docker run --rm so-escalonador-g3
+```
+
+Execução com persistência do log no Linux, macOS ou WSL2:
+
+```bash
 docker run --rm -v "$(pwd)/output:/app/output" so-escalonador-g3
+```
+
+Execução com persistência do log no Windows PowerShell:
+
+```powershell
+docker run --rm -v "${PWD}/output:/app/output" so-escalonador-g3
 ```
