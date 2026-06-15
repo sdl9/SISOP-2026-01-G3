@@ -1,12 +1,12 @@
 # Trabalho Final de Sistemas Operacionais
 
 ## Grupo
-- Aluno 1: Fernando Mueller
-- Aluno 2: Arthur Duarte
-- Aluno 3: Matheus Muller
-- Aluno 4: Guilherme
-- Aluno 5: Laíssa Salles
-- Aluno 6: Nicolas Jahno
+- Aluno 1: Fernando Goetz Mueller
+- Aluno 2: Arthur Duarte Fernandes
+- Aluno 3: Matheus Felipe Muller
+- Aluno 4: Guilherme Manente Cruz Berlitz
+- Aluno 5: Laíssa Dornelles Salles
+- Aluno 6: Nicolas Dalosto Jahno 
 
 ## Sobre o projeto
 
